@@ -14,7 +14,7 @@ const int SEG[7] = {9, 10, 11, 12, 13, A0, A1};
 
 //  7-Segment Digit Encoding 
 // Segments: A B C D E F G
-// Digit patterns for 0–9 (1 = segment ON)
+// Digit patterns for 0–9
 const byte DIGITS[10][7] = {
   {1,1,1,1,1,1,0}, // 0
   {0,1,1,0,0,0,0}, // 1
@@ -91,7 +91,7 @@ void setup() {
 void loop() {
   // Poll button (active LOW due to INPUT_PULLUP)
   if (digitalRead(BUTTON_PIN) == LOW) {
-    delay(50); // Debounce
+    delay(50); 
     if (digitalRead(BUTTON_PIN) == LOW) {
       Serial.println("Button pressed! Starting pedestrian crossing sequence.");
       pedestrianCrossingSequence();
