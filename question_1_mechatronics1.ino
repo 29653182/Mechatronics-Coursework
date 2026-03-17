@@ -1,49 +1,4 @@
-/*
-  ============================================================
-  Traffic Light + Pedestrian Crossing with Countdown & Buzzer
-  Arduino UNO R3 — Tinkercad Compatible
-  ============================================================
-
-  WIRING GUIDE (Pin Assignments):
-  ─────────────────────────────────────────────────────────
-  TRAFFIC LIGHT (Vehicle):
-    Pin 2  → Red    LED  (+ 220Ω resistor → GND)
-    Pin 3  → Yellow LED  (+ 220Ω resistor → GND)
-    Pin 4  → Green  LED  (+ 220Ω resistor → GND)
-
-  PEDESTRIAN LIGHT:
-    Pin 5  → Red    LED  (+ 220Ω resistor → GND)
-    Pin 6  → Green  LED  (+ 220Ω resistor → GND)
-
-  PEDESTRIAN BUTTON:
-    Pin 7  → Push Button → GND  (INPUT_PULLUP, active LOW)
-
-  BUZZER:
-    Pin 8  → Passive Buzzer (+) → GND
-
-  7-SEGMENT DISPLAY (Common Cathode):
-    Segments A–G connected via 220Ω resistors
-    Pin  9  → Segment A
-    Pin 10  → Segment B
-    Pin 11  → Segment C
-    Pin 12  → Segment D
-    Pin 13  → Segment E
-    Pin A0  → Segment F
-    Pin A1  → Segment G
-    Common Cathode → GND
-
-  ─────────────────────────────────────────────────────────
-  SYSTEM BEHAVIOUR:
-    1. Normal state: Traffic GREEN, Pedestrian RED
-    2. Button pressed: Traffic transitions Yellow → Red
-    3. Pedestrian GREEN + countdown from 9→0 on 7-segment
-    4. Buzzer beeps during pedestrian crossing
-       (fast beep last 3 seconds as warning)
-    5. Returns to normal traffic flow
-  ============================================================
-*/
-
-// ── Pin Definitions ──────────────────────────────────────
+//  Pin Definitions 
 const int TRAFFIC_RED    = 2;
 const int TRAFFIC_YELLOW = 3;
 const int TRAFFIC_GREEN  = 4;
@@ -57,7 +12,7 @@ const int BUZZER_PIN     = 8;
 // 7-Segment pins: A, B, C, D, E, F, G
 const int SEG[7] = {9, 10, 11, 12, 13, A0, A1};
 
-// ── 7-Segment Digit Encoding ─────────────────────────────
+//  7-Segment Digit Encoding 
 // Segments: A B C D E F G
 // Digit patterns for 0–9 (1 = segment ON)
 const byte DIGITS[10][7] = {
@@ -73,7 +28,7 @@ const byte DIGITS[10][7] = {
   {1,1,1,1,0,1,1}, // 9
 };
 
-// ── Function: Display digit on 7-segment ─────────────────
+//  Function: Display digit on 7-segment 
 void showDigit(int num) {
   if (num < 0 || num > 9) {
     for (int i = 0; i < 7; i++) digitalWrite(SEG[i], LOW);
@@ -84,30 +39,30 @@ void showDigit(int num) {
   }
 }
 
-// ── Function: Clear 7-segment ─────────────────────────────
+//  Function: Clear 7-segment 
 void clearDisplay() {
   for (int i = 0; i < 7; i++) digitalWrite(SEG[i], LOW);
 }
 
-// ── Function: Buzzer beep ─────────────────────────────────
+//  Function: Buzzer beep 
 void beep(int frequency, int duration) {
   tone(BUZZER_PIN, frequency, duration);
 }
 
-// ── Function: Set traffic light ───────────────────────────
+//  Function: Set traffic light 
 void setTrafficLight(bool red, bool yellow, bool green) {
   digitalWrite(TRAFFIC_RED,    red    ? HIGH : LOW);
   digitalWrite(TRAFFIC_YELLOW, yellow ? HIGH : LOW);
   digitalWrite(TRAFFIC_GREEN,  green  ? HIGH : LOW);
 }
 
-// ── Function: Set pedestrian light ───────────────────────
+//  Function: Set pedestrian light 
 void setPedLight(bool red, bool green) {
   digitalWrite(PED_RED,   red   ? HIGH : LOW);
   digitalWrite(PED_GREEN, green ? HIGH : LOW);
 }
 
-// ── Setup ─────────────────────────────────────────────────
+//  Setup 
 void setup() {
   pinMode(TRAFFIC_RED,    OUTPUT);
   pinMode(TRAFFIC_YELLOW, OUTPUT);
@@ -132,7 +87,7 @@ void setup() {
   Serial.println("System ready. Press pedestrian button.");
 }
 
-// ── Main Loop ─────────────────────────────────────────────
+//  Main Loop
 void loop() {
   // Poll button (active LOW due to INPUT_PULLUP)
   if (digitalRead(BUTTON_PIN) == LOW) {
@@ -145,7 +100,7 @@ void loop() {
   }
 }
 
-// ── Pedestrian Crossing Sequence ──────────────────────────
+//  Pedestrian Crossing Sequence 
 void pedestrianCrossingSequence() {
 
   // PHASE 1: Traffic Yellow (3 second warning)
