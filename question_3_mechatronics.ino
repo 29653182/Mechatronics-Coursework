@@ -149,11 +149,11 @@ void updateLCD(int pct, bool on) {
   if (pct < 10) lcd.print("  ");
   else if (pct < 100) lcd.print(" ");
   lcd.print(pct);
-  lcd.print("% ");
+  lcd.print("%");
 
-  int filled = map(pct, 0, 100, 0, 7);
+  int filled = map(pct, 0, 100, 0, 6);
   lcd.print("[");
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < 6; i++) {
     lcd.print(i < filled ? (char)255 : ' ');
   }
   lcd.print("]");
