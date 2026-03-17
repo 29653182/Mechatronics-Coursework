@@ -1,7 +1,7 @@
 #include <Servo.h>
 #include <LiquidCrystal.h>
  
-// --- Pin Definitions ---
+//  Pin Definitions
 #define TRIG_PIN     9
 #define ECHO_PIN     10
 #define SERVO_PIN    6
