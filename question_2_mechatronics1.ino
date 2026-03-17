@@ -13,9 +13,6 @@ void setup() {
 }
 
 void loop() {
-  int lightVal = analogRead(ldrPin);  // Read the LDR (0–1023)
-
-  
  lightVal = analogRead(ldrPin); 
 lightVal = map(lightVal, 10, 1000, 0, 100); // Changes Range to 0-100
   
