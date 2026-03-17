@@ -1,34 +1,16 @@
-// ============================================
-//  Servo Controller with LCD, Button & Pot
-//  TinkerCAD / Arduino Uno R3
-//  + LED indicator on when system is ON
-// ============================================
-//  PIN LAYOUT:
-//  Servo Signal  → Pin 9
-//  Button        → Pin 2  (other leg to GND)
-//  Potentiometer → A0     (outer legs: 5V & GND)
-//  LED           → Pin 13 (onboard LED OK)
-//  LCD RS        → Pin 12
-//  LCD EN        → Pin 11
-//  LCD D4        → Pin 6
-//  LCD D5        → Pin 5
-//  LCD D6        → Pin 4
-//  LCD D7        → Pin 3
-// ============================================
-
 #include <Servo.h>
 #include <LiquidCrystal.h>
 
-// ── Pin Definitions ──────────────────────────
+//  Pin Definitions 
 const int SERVO_PIN  = 9;
 const int BUTTON_PIN = 2;
 const int POT_PIN    = A0;
-const int LED_PIN    = 13;   // <— NEW: LED indicator
+const int LED_PIN    = 13;   
 
-// ── LCD: RS, EN, D4, D5, D6, D7 ─────────────
+//  LCD: RS, EN, D4, D5, D6, D7 
 LiquidCrystal lcd(12, 11, 6, 5, 4, 3);
 
-// ── Objects & State ──────────────────────────
+//  Objects & State 
 Servo myServo;
 
 bool isOn = false;
@@ -45,14 +27,14 @@ int servoDir = 1;
 int lastSpeedPct = -1;
 bool lastIsOn = false;
 
-// ── Custom LCD Characters ─────────────────────
+//  Custom LCD Characters 
 byte arrowUp[8]   = {0b00100,0b01110,0b11111,0b00100,0b00100,0b00100,0b00100,0b00000};
 byte arrowDown[8] = {0b00100,0b00100,0b00100,0b00100,0b11111,0b01110,0b00100,0b00000};
 
-// ─────────────────────────────────────────────
+// setup
 void setup() {
   pinMode(BUTTON_PIN, INPUT_PULLUP);
-  pinMode(LED_PIN, OUTPUT);            // <— NEW
+  pinMode(LED_PIN, OUTPUT);            
   digitalWrite(LED_PIN, LOW);          // start OFF
 
   myServo.attach(SERVO_PIN);
@@ -72,12 +54,9 @@ void setup() {
   updateLCD(0, false, true);
 }
 
-// ─────────────────────────────────────────────
+// Main Loop
 void loop() {
-
-  // ╔═════════════════════════════════════════╗
-  // ║     1. BUTTON HANDLING (DEBOUNCED)      ║
-  // ╚═════════════════════════════════════════╝
+  // BUTTON HANDLING (DEBOUNCED)
 
   bool raw = digitalRead(BUTTON_PIN);
 
@@ -92,11 +71,11 @@ void loop() {
     // If stable state actually changed:
     if (raw != lastStableBtn) {
 
-      // Detect falling edge (button pressed)
+      // (button pressed)
       if (raw == LOW) {
         isOn = !isOn;
 
-        // NEW: immediately reflect LED state on toggle
+        // immediately reflect LED state on toggle
         digitalWrite(LED_PIN, isOn ? HIGH : LOW);
 
         if (!isOn) {
@@ -111,18 +90,14 @@ void loop() {
   }
 
   lastRawBtn = raw;
-
-  // ╔═════════════════════════════════════════╗
-  // ║     2. READ POTENTIOMETER SPEED         ║
-  // ╚═════════════════════════════════════════╝
+  // READ POTENTIOMETER SPEED  
 
   int potVal   = analogRead(POT_PIN);
   int speedPct = map(potVal, 0, 1023, 0, 100);
   int moveDelay = map(speedPct, 0, 100, 80, 5);
 
-  // ╔═════════════════════════════════════════╗
-  // ║     3. UPDATE LCD WHEN SOMETHING CHANGES║
-  // ╚═════════════════════════════════════════╝
+  // UPDATE LCD WHEN SOMETHING CHANGES
+
 
   bool changed = (speedPct != lastSpeedPct) || (isOn != lastIsOn);
   if (changed) {
@@ -131,12 +106,10 @@ void loop() {
     lastIsOn = isOn;
   }
 
-  // Keep LED synced (defensive)
+  // Keep LED synced 
   digitalWrite(LED_PIN, isOn ? HIGH : LOW);
 
-  // ╔═════════════════════════════════════════╗
-  // ║     4. MOVE SERVO WHEN SYSTEM IS ON     ║
-  // ╚═════════════════════════════════════════╝
+  //  MOVE SERVO WHEN SYSTEM IS ON    
 
   if (isOn) {
     servoPos += servoDir;
@@ -157,9 +130,9 @@ void loop() {
   }
 }
 
-// ─────────────────────────────────────────────
-//       LCD DRAWING FUNCTION (UNCHANGED)
-// ─────────────────────────────────────────────
+
+//     LCD DRAWING FUNCTION
+
 void updateLCD(int pct, bool on, bool forceRedraw) {
 
   lcd.setCursor(0, 0);
