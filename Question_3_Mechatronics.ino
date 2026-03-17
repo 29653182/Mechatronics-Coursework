@@ -133,7 +133,7 @@ void loop() {
 
 //     LCD DRAWING FUNCTION
 
-void updateLCD(int pct, bool on, bool forceRedraw) {
+void updateLCD(int pct, bool on) {
 
   lcd.setCursor(0, 0);
   if (on) {
