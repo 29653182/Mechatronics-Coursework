@@ -15,11 +15,6 @@ Servo myServo;
 
 bool isOn = false;
 
-// Debounce tracking
-bool lastRawBtn = HIGH;     // raw pin reading last loop
-bool lastStableBtn = HIGH;  // last *stable* (debounced) state
-unsigned long lastDebounceTime = 0;
-const int DEBOUNCE_DELAY = 50;
 
 int servoPos = 0;
 int servoDir = 1;
