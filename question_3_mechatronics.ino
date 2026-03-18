@@ -139,5 +139,3 @@ void updateLCD(int pct, bool on, bool forceRedraw) {
   }
   lcd.print("]");
 }
-  lcd.print("]");
-}
