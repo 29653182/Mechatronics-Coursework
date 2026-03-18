@@ -83,8 +83,6 @@ void setup() {
   setPedLight(true, false);
   clearDisplay();
 
-  Serial.begin(9600);
-  Serial.println("System ready. Press pedestrian button.");
 }
 
 //  Main Loop
@@ -93,7 +91,6 @@ void loop() {
   if (digitalRead(BUTTON_PIN) == LOW) {
     delay(50); 
     if (digitalRead(BUTTON_PIN) == LOW) {
-      Serial.println("Button pressed! Starting pedestrian crossing sequence.");
       pedestrianCrossingSequence();
       while (digitalRead(BUTTON_PIN) == LOW) delay(10);
     }
@@ -155,5 +152,4 @@ void pedestrianCrossingSequence() {
   // PHASE 6: Traffic Green resumes
   setTrafficLight(false, false, true);
   clearDisplay();
-  Serial.println("Crossing complete. Traffic resumed.");
 }
