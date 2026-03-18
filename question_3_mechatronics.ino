@@ -26,7 +26,7 @@ int servoDir = 1;
 
 int lastSpeedPct = -1;
 bool lastIsOn = false;
-
+int lastServoDir = 1; 
 //  Custom LCD Characters 
 byte arrowUp[8]   = {0b00100,0b01110,0b11111,0b00100,0b00100,0b00100,0b00100,0b00000};
 byte arrowDown[8] = {0b00100,0b00100,0b00100,0b00100,0b11111,0b01110,0b00100,0b00000};
@@ -58,39 +58,19 @@ void setup() {
 void loop() {
   // BUTTON HANDLING (DEBOUNCED)
 
-  bool raw = digitalRead(BUTTON_PIN);
-
-  // If raw state changed, restart debounce timer
-  if (raw != lastRawBtn) {
-    lastDebounceTime = millis();
-  }
-
-  // If raw state stable long enough, accept it
-  if ((millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
-
-    // If stable state actually changed:
-    if (raw != lastStableBtn) {
-
-      // (button pressed)
-      if (raw == LOW) {
-        isOn = !isOn;
-
-        // immediately reflect LED state on toggle
-        digitalWrite(LED_PIN, isOn ? HIGH : LOW);
-
-        if (!isOn) {
-          myServo.write(0);
-          servoPos = 0;
-          servoDir = 1;
-        }
-      }
-
-      lastStableBtn = raw; // update stable state
+if (digitalRead(BUTTON_PIN) == LOW) {
+  delay(50); // Debounce
+  if (digitalRead(BUTTON_PIN) == LOW) {
+    isOn = !isOn;
+    digitalWrite(LED_PIN, isOn ? HIGH : LOW);
+    if (!isOn) {
+      myServo.write(0);
+      servoPos = 0;
+      servoDir = 1;
     }
+    while (digitalRead(BUTTON_PIN) == LOW) delay(10); // Wait for release
   }
-
-  lastRawBtn = raw;
-  // READ POTENTIOMETER SPEED  
+}
 
   int potVal   = analogRead(POT_PIN);
   int speedPct = map(potVal, 0, 1023, 0, 100);
@@ -99,11 +79,12 @@ void loop() {
   // UPDATE LCD WHEN SOMETHING CHANGES
 
 
-  bool changed = (speedPct != lastSpeedPct) || (isOn != lastIsOn);
-  if (changed) {
+bool changed = (speedPct != lastSpeedPct) || (isOn != lastIsOn) || (servoDir != lastServoDir);
+if (changed) {
     updateLCD(speedPct, isOn, false);
     lastSpeedPct = speedPct;
     lastIsOn = isOn;
+    lastServoDir = servoDir;
   }
 
   // Keep LED synced 
@@ -133,11 +114,11 @@ void loop() {
 
 //     LCD DRAWING FUNCTION
 
-void updateLCD(int pct, bool on) {
+void updateLCD(int pct, bool on, bool forceRedraw) {
 
   lcd.setCursor(0, 0);
   if (on) {
-    lcd.write(byte(0));
+    lcd.write(byte(servoDir == -1 ? 0 : 1));
     lcd.print(" STATUS: ON  ");
   } else {
     lcd.print("  STATUS: OFF ");
@@ -156,5 +137,7 @@ void updateLCD(int pct, bool on) {
   for (int i = 0; i < 6; i++) {
     lcd.print(i < filled ? (char)255 : ' ');
   }
+  lcd.print("]");
+}
   lcd.print("]");
 }
